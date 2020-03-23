@@ -25,6 +25,21 @@ def ReadFemResp(dct_file='2002FemResp.dct',
     return df
 
 
+def crossValidateRespPreg():
+
+    preg = nsfg.ReadFemPreg()
+    resp = ReadFemResp()
+    mapperDict = nsfg.MakePregMap(preg)
+    cnt = 0
+    for caseid in resp.caseid:
+        if len(mapperDict[caseid]) != resp[resp.caseid==caseid].pregnum.iloc[0]:
+            print("Validation failed at CASEID = ", caseid, "; cnt=",cnt)
+            break
+        cnt += 1
+    if cnt == resp.shape[0]:
+        print('Respondent and pregnancy files validated')
+
+
 def main(script):
     """Tests the functions in this module.
 
@@ -36,6 +51,8 @@ def main(script):
     # resp['pregnum'].value_counts().sort_index()
 
     # preg[preg.caseid==10229].shape[0] == resp[resp.caseid==10229]["pregnum"] 
+    
+    crossValidateRespPreg()
 
     print('%s: All tests passed.' % script)
 
